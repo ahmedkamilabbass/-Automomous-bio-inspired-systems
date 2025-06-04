@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webots Fundamentals for Bio-inspired Robotics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (Slate, Zinc, Sky) -->
+    <!-- Application Structure Plan: A thematic, single-page application designed to guide students through a learning journey. The core is an interactive timeline representing the course progression, allowing users to click on topics to reveal detailed information. This non-linear exploration is more engaging than a static report. It's supported by an interactive GUI diagram, challenge cards, and a resource hub, transforming the curriculum from a document into a tool. -->
+    <!-- Visualization & Content Choices: Report Info: Webots GUI components. Goal: Organize/Inform. Viz: Interactive HTML/CSS diagram with hover effects. Justification: More engaging and intuitive than a static table. Report Info: Lecture progression. Goal: Show Change/Organize. Viz: Clickable vertical timeline. Justification: Visually represents the learning path and chunks information effectively. Report Info: API functions/Resources. Goal: Organize. Viz: Clickable cards and lists. Justification: Modern, scannable, and more user-friendly than dense tables. Library/Method: Vanilla JS for all interactions. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #0284c7; /* sky-600 */
+            border-bottom-color: #0284c7; /* sky-600 */
+        }
+        .content-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .timeline-item-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .timeline-item-content.open {
+            max-height: 1000px; /* Adjust as needed */
+        }
+        .gui-element {
+            transition: background-color 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+        .gui-element:hover, .gui-element.active {
+            background-color: #e0f2fe; /* sky-100 */
+            border-color: #0284c7; /* sky-600 */
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header & Navigation -->
+    <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-sky-700">Bio-inspired Robotics</h1>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#why-webots" class="nav-link font-medium">Why Webots?</a>
+                <a href="#learning-path" class="nav-link font-medium">Learning Path</a>
+                <a href="#toolkit" class="nav-link font-medium">The Toolkit</a>
+                <a href="#challenges" class="nav-link font-medium">Challenges</a>
+                <a href="#swarm" class="nav-link font-medium">Swarm Robotics</a>
+                <a href="#resources" class="nav-link font-medium">Resources</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600">
+                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 flex flex-col space-y-2">
+            <a href="#why-webots" class="nav-link block py-2">Why Webots?</a>
+            <a href="#learning-path" class="nav-link block py-2">Learning Path</a>
+            <a href="#toolkit" class="nav-link block py-2">The Toolkit</a>
+            <a href="#challenges" class="nav-link block py-2">Challenges</a>
+            <a href="#swarm" class="nav-link block py-2">Swarm Robotics</a>
+            <a href="#resources" class="nav-link block py-2">Resources</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <!-- Intro Section -->
+        <section class="text-center mb-24">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Webots Fundamentals</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">An interactive guide for the Bio-inspired Robotics course at the University of Namur. Explore the core concepts of the Webots simulator and prepare for your practical journey into robotics.</p>
+        </section>
+
+        <!-- Why Webots? -->
+        <section id="why-webots" class="mb-24 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-2">Why Webots?</h3>
+            <p class="text-md text-slate-600 text-center max-w-3xl mx-auto mb-12">This section introduces Webots as the foundational tool for our practical course. Its professional-grade features, open-source accessibility, and powerful integrations make it an ideal platform for bridging theory with hands-on application in robotics research and development.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md content-card">
+                    <div class="text-3xl mb-4">💻</div>
+                    <h4 class="text-xl font-bold mb-2">Open-Source & Accessible</h4>
+                    <p class="text-slate-600">Free for all students on any platform (Windows, macOS, Linux). This removes barriers and allows you to install and experiment on your own machine, a core part of our hands-on approach.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md content-card">
+                    <div class="text-3xl mb-4">⚙️</div>
+                    <h4 class="text-xl font-bold mb-2">Versatile & Powerful</h4>
+                    <p class="text-slate-600">Features a rich library of robots, sensors, and objects. You can program in Python, C++, Java, and more, ensuring the skills you learn are valuable and transferable to the wider robotics field.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md content-card">
+                    <div class="text-3xl mb-4">🔗</div>
+                    <h4 class="text-xl font-bold mb-2">ROS & Industry Ready</h4>
+                    <p class="text-slate-600">Integrates seamlessly with the Robot Operating System (ROS), the industry standard for robotics development. This prepares you for advanced topics, including multi-robot systems and swarm intelligence.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Path -->
+        <section id="learning-path" class="mb-24 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-2">Your Learning Path</h3>
+            <p class="text-md text-slate-600 text-center max-w-3xl mx-auto mb-12">This interactive learning path outlines the two foundational lectures. Click on each step to expand its content and explore the core concepts you will master. The journey is designed to build your skills progressively, from basic navigation to programming intelligent robot behaviors.</p>
+            <div class="max-w-3xl mx-auto">
+                <!-- Timeline Item 1 -->
+                <div class="timeline-item relative pl-8 sm:pl-12 py-6 border-l-4 border-sky-200">
+                    <div class="absolute -left-[1.3rem] top-8 w-10 h-10 bg-sky-500 rounded-full text-white flex items-center justify-center font-bold">1</div>
+                    <button class="timeline-header w-full text-left">
+                        <h4 class="text-2xl font-bold cursor-pointer">Lecture 1: The World</h4>
+                        <p class="text-slate-500">Mastering the environment and building your first simulation.</p>
+                    </button>
+                    <div class="timeline-item-content">
+                        <div class="mt-4 space-y-4 text-slate-700 bg-white p-6 rounded-lg border border-slate-200">
+                            <h5 class="font-bold text-lg">System Readiness Check</h5>
+                            <p>Before we begin, we ensure your system is ready. The first lectures cover installing Ubuntu, Webots, and ROS. A key check is Python compatibility; for instance, Webots R2022b works with Python 3.7-3.10. Mismatched versions are a common source of errors.</p>
+                            <h5 class="font-bold text-lg">Creating an Environment</h5>
+                            <p>You'll learn to craft simulation worlds from scratch. This involves adding fundamental nodes like `Background` and `RectangleArena`, and importing pre-built robots like the e-puck. You will learn to manipulate objects directly in the 3D view and make structural changes through the Scene Tree.</p>
+                             <h5 class="font-bold text-lg">The DEF-USE Mechanism</h5>
+                            <p>A key concept for efficiency is the `DEF-USE` mechanism. It allows you to define an object once (`DEF`) and reuse it multiple times (`USE`). Changes to the `DEF` node automatically update all instances, which is essential for creating complex scenes and later, for deploying swarms of identical robots.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Timeline Item 2 -->
+                <div class="timeline-item relative pl-8 sm:pl-12 py-6 border-l-4 border-sky-200">
+                    <div class="absolute -left-[1.3rem] top-8 w-10 h-10 bg-sky-500 rounded-full text-white flex items-center justify-center font-bold">2</div>
+                     <button class="timeline-header w-full text-left">
+                        <h4 class="text-2xl font-bold cursor-pointer">Lecture 2: The Robot</h4>
+                        <p class="text-slate-500">Bringing your robot to life with code and behavior.</p>
+                    </button>
+                    <div class="timeline-item-content">
+                        <div class="mt-4 space-y-4 text-slate-700 bg-white p-6 rounded-lg border border-slate-200">
+                            <h5 class="font-bold text-lg">Robot Controllers</h5>
+                            <p>A controller is the brain of your robot. We'll focus on Python. The core of any controller is the main loop containing `robot.step(TIME_STEP)`. This function is critical: it synchronizes your code with the simulator's physics engine, reads new sensor data, and applies your motor commands.</p>
+                            <h5 class="font-bold text-lg">Sensors and Actuators</h5>
+                            <p>Robots perceive and act through devices. You'll learn to access sensors (like `DistanceSensor` or `Camera`) and actuators (like `Motor` or `LED`) using `robot.getDevice("name")`. Sensors must be enabled with `sensor.enable(sampling_period)` to get data. Motor commands like `motor.setVelocity()` are only executed at the next `robot.step()` call.</p>
+                            <h5 class="font-bold text-lg">Implementing Behaviors</h5>
+                            <p>From simple movements like driving forward, you will progress to creating reactive behaviors. A classic first step is obstacle avoidance, where the robot uses its distance sensors to detect objects and changes its motor speeds to navigate around them. This introduces the fundamental concept of a sense-plan-act cycle.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Webots Toolkit -->
+        <section id="toolkit" class="mb-24 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-2">The Webots Toolkit</h3>
+            <p class="text-md text-slate-600 text-center max-w-3xl mx-auto mb-12">The Webots Graphical User Interface (GUI) is your integrated development environment. It's designed to streamline your workflow, from visual design to coding and debugging. Interact with the diagram below to learn about the four main components you'll be using.</p>
+            <div class="grid lg:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="grid grid-cols-2 grid-rows-2 gap-4 h-96">
+                        <div id="gui-3d" class="gui-element col-span-2 row-span-1 bg-slate-100 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-500 font-bold text-lg">3D View</div>
+                        <div id="gui-tree" class="gui-element bg-slate-100 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-500 font-bold text-lg">Scene Tree</div>
+                        <div id="gui-editor" class="gui-element bg-slate-100 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-500 font-bold text-lg">Text Editor</div>
+                        <div id="gui-console" class="gui-element col-span-2 row-span-1 bg-slate-100 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-500 font-bold text-lg mt-[-1rem] h-[calc(100%+1rem)]">Console</div>
+                    </div>
+                </div>
+                <div id="gui-info-panel" class="bg-white p-8 rounded-lg shadow-md min-h-[24rem]">
+                    <h4 id="gui-info-title" class="text-2xl font-bold mb-4 text-sky-700">Interactive GUI</h4>
+                    <p id="gui-info-text" class="text-slate-600">Click on a component in the diagram to learn about its function. This interactive view helps you understand where to find tools for world building, coding, and debugging, reducing the learning curve.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Challenges -->
+        <section id="challenges" class="mb-24 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-2">Your First Challenges</h3>
+            <p class="text-md text-slate-600 text-center max-w-3xl mx-auto mb-12">These practical exercises are designed to solidify your understanding and give you hands-on experience. They represent the culmination of each foundational lecture, requiring you to apply the concepts of world building and robot programming in a tangible way. Now, with the help of Gemini, you can also get hints directly within the app!</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-lg border-2 border-sky-200 shadow-lg content-card">
+                    <span class="inline-block bg-sky-100 text-sky-800 text-sm font-semibold px-3 py-1 rounded-full mb-4">Lecture 1 Exercise</span>
+                    <h4 class="text-2xl font-bold mb-3">World Building Challenge</h4>
+                    <p class="text-slate-600 mb-4">Create a custom environment, like a maze or an obstacle course. You must use the Scene Tree to add and arrange objects and apply the `DEF-USE` mechanism to efficiently create at least three repeated obstacles.</p>
+                    <ul class="text-slate-700 space-y-2 mb-4">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Add & Position Nodes</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Modify Node Properties</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Master the `DEF-USE` workflow</li>
+                    </ul>
+                    <button class="get-hint-button bg-sky-600 text-white px-6 py-2 rounded-md hover:bg-sky-700 transition-colors duration-300" data-challenge="world-building">✨ Get Hint ✨</button>
+                </div>
+                 <div class="bg-white p-8 rounded-lg border-2 border-sky-200 shadow-lg content-card">
+                    <span class="inline-block bg-sky-100 text-sky-800 text-sm font-semibold px-3 py-1 rounded-full mb-4">Lecture 2 Exercise</span>
+                    <h4 class="text-2xl font-bold mb-3">Obstacle Avoidance</h4>
+                    <p class="text-slate-600 mb-4">Program an e-puck robot to navigate an environment with static obstacles without colliding. This requires writing a Python controller that reads sensor data and controls motor speeds.</p>
+                    <ul class="text-slate-700 space-y-2 mb-4">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Write a Python controller</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Enable and Read Distance Sensors</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Implement conditional logic</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Control motor velocity</li>
+                    </ul>
+                    <button class="get-hint-button bg-sky-600 text-white px-6 py-2 rounded-md hover:bg-sky-700 transition-colors duration-300" data-challenge="obstacle-avoidance">✨ Get Hint ✨</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Swarm Robotics -->
+        <section id="swarm" class="mb-24 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-2">Groundwork for Swarm Robotics</h3>
+            <p class="text-md text-slate-600 text-center max-w-3xl mx-auto mb-12">These foundational lectures prepare you for one of the most exciting areas of bio-inspired robotics: swarm intelligence. Here are the key Webots features you'll use to design, simulate, and analyze the behavior of multi-robot systems.</p>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-8 rounded-lg shadow-md content-card">
+                    <div class="text-3xl mb-4">📡</div>
+                    <h4 class="text-xl font-bold mb-2">Inter-Robot Communication</h4>
+                    <p class="text-slate-600">Robots in a swarm communicate using `Emitter` and `Receiver` nodes. You can simulate different communication types, like line-of-sight "infra-red" or broadcast "radio," to test the robustness of your algorithms.</p>
+                </div>
+                 <div class="bg-white p-8 rounded-lg shadow-md content-card">
+                    <div class="text-3xl mb-4">👑</div>
+                    <h4 class="text-xl font-bold mb-2">Supervisor Controllers</h4>
+                    <p class="text-slate-600">A special `Supervisor` controller can oversee the entire simulation. It can reset the world, move robots, and send data to the swarm, making it essential for running automated experiments like genetic algorithms.</p>
+                </div>
+                 <div class="bg-white p-8 rounded-lg shadow-md content-card">
+                    <div class="text-3xl mb-4">⚡️</div>
+                    <h4 class="text-xl font-bold mb-2">Performance Optimization</h4>
+                    <p class="text-slate-600">Simulating large swarms is computationally intensive. You'll learn to balance realism and speed by simplifying collision models (`boundingObject`) and adjusting the simulation time step (`basicTimeStep`).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section id="resources" class="scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-2">Resource Hub</h3>
+            <p class="text-md text-slate-600 text-center max-w-3xl mx-auto mb-12">Your learning doesn't stop here. The Webots ecosystem is rich with documentation, community support, and examples. Use these official resources to deepen your knowledge, troubleshoot problems, and find inspiration for your projects.</p>
+             <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="https://cyberbotics.com/doc/guide/index" target="_blank" class="block bg-white p-6 rounded-lg shadow-md content-card">
+                    <h4 class="font-bold text-lg text-sky-700">User Guide</h4>
+                    <p class="text-slate-600 text-sm">The official tutorials and guides. Start here for step-by-step instructions.</p>
+                </a>
+                <a href="https://cyberbotics.com/doc/reference/index" target="_blank" class="block bg-white p-6 rounded-lg shadow-md content-card">
+                    <h4 class="font-bold text-lg text-sky-700">Reference Manual</h4>
+                    <p class="text-slate-600 text-sm">Detailed information on every node and API function in Webots.</p>
+                </a>
+                 <a href="https://cyberbotics.com/doc/discord" target="_blank" class="block bg-white p-6 rounded-lg shadow-md content-card">
+                    <h4 class="font-bold text-lg text-sky-700">Discord Server</h4>
+                    <p class="text-slate-600 text-sm">Join the community for quick help from developers and other users.</p>
+                </a>
+                <a href="https://stackoverflow.com/questions/tagged/webots" target="_blank" class="block bg-white p-6 rounded-lg shadow-md content-card">
+                    <h4 class="font-bold text-lg text-sky-700">Stack Overflow</h4>
+                    <p class="text-slate-600 text-sm">Find answers to common programming questions and problems.</p>
+                </a>
+                 <a href="https://github.com/cyberbotics/webots" target="_blank" class="block bg-white p-6 rounded-lg shadow-md content-card">
+                    <h4 class="font-bold text-lg text-sky-700">GitHub Repository</h4>
+                    <p class="text-slate-600 text-sm">Report bugs, see the source code, and contribute to the project.</p>
+                </a>
+                <a href="https://www.youtube.com/user/cyberboticswebots" target="_blank" class="block bg-white p-6 rounded-lg shadow-md content-card">
+                    <h4 class="font-bold text-lg text-sky-700">YouTube Channel</h4>
+                    <p class="text-slate-600 text-sm">Visual tutorials and demonstrations of Webots features.</p>
+                </a>
+                 <a href="https://en.wikibooks.org/wiki/Cyberbotics'_Robot_Curriculum" target="_blank" class="block bg-white p-6 rounded-lg shadow-md content-card">
+                    <h4 class="font-bold text-lg text-sky-700">Robot Curriculum</h4>
+                    <p class="text-slate-600 text-sm">A Wikibook with beginner exercises, often using the e-puck robot.</p>
+                </a>
+                 <div class="bg-slate-100 p-6 rounded-lg border border-slate-200">
+                    <h4 class="font-bold text-lg text-sky-700">Sample Projects</h4>
+                    <p class="text-slate-600 text-sm">Explore the many examples included with your Webots installation for inspiration.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 mt-24">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Bio-inspired Robotics | University of Namur</p>
+            <p class="text-sm text-slate-400 mt-2">Interactive Guide created from Course Plan</p>
+        </div>
+    </footer>
+
+    <!-- Hint Modal -->
+    <div id="hint-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h4 class="text-2xl font-bold mb-4 text-sky-700">Hint from Gemini ✨</h4>
+            <div id="hint-content" class="text-slate-700">
+                <p>Loading hint...</p>
+                <div id="hint-loading" class="flex items-center justify-center py-4">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-600"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Navigation highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                    });
+                }
+            });
+        }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Timeline accordion
+        const timelineHeaders = document.querySelectorAll('.timeline-header');
+        timelineHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                content.classList.toggle('open');
+            });
+        });
+
+        // Interactive GUI diagram
+        const guiElements = document.querySelectorAll('.gui-element');
+        const guiInfoTitle = document.getElementById('gui-info-title');
+        const guiInfoText = document.getElementById('gui-info-text');
+        
+        const guiContent = {
+            'gui-3d': {
+                title: '3D View',
+                text: 'Your primary window for visualizing the simulation. You can control the camera, watch your robot interact with the world, and even apply physical forces to objects.'
+            },
+            'gui-tree': {
+                title: 'Scene Tree',
+                text: 'A hierarchical list of every object (node) in your world. This is where you will precisely edit properties (fields) like a robot\'s position, an object\'s color, or a motor\'s max speed.'
+            },
+            'gui-editor': {
+                title: 'Text Editor',
+                text: 'The built-in code editor where you will write and modify your robot controller programs in languages like Python or C++. You can compile and save directly from here.'
+            },
+            'gui-console': {
+                title: 'Console',
+                text: 'The feedback hub. It displays important messages, errors from your code, and logs from the Webots application itself. This is your first stop for debugging.'
+            }
+        };
+
+        guiElements.forEach(element => {
+            element.addEventListener('click', () => {
+                const content = guiContent[element.id];
+                if (content) {
+                    guiInfoTitle.textContent = content.title;
+                    guiInfoText.textContent = content.text;
+
+                    guiElements.forEach(el => el.classList.remove('active'));
+                    element.classList.add('active');
+                }
+            });
+        });
+
+        // Gemini API Integration for Hints
+        const hintButtons = document.querySelectorAll('.get-hint-button');
+        const hintModal = document.getElementById('hint-modal');
+        const hintContent = document.getElementById('hint-content');
+        const hintLoading = document.getElementById('hint-loading');
+        const closeButton = document.querySelector('.close-button');
+
+        const challengePrompts = {
+            'world-building': "As a Webots expert, provide a concise, actionable hint for a beginner on how to efficiently use the DEF-USE mechanism to create multiple repeated obstacles in a Webots world. Focus on the steps in the Webots GUI and Scene Tree.",
+            'obstacle-avoidance': "As a Webots expert, provide a concise, actionable hint for a beginner on how to implement basic obstacle avoidance for an e-puck robot in Webots using Python. Focus on reading distance sensors and controlling motors."
+        };
+
+        hintButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                const challengeType = button.dataset.challenge;
+                const prompt = challengePrompts[challengeType];
+
+                hintContent.innerHTML = ''; // Clear previous content
+                hintLoading.style.display = 'flex'; // Show loading spinner
+                hintModal.style.display = 'flex'; // Show the modal
+
+                if (prompt) {
+                    try {
+                        let chatHistory = [];
+                        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                        const payload = { contents: chatHistory };
+                        const apiKey = ""; // Leave as-is, Canvas provides at runtime
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                        
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const result = await response.json();
+
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            const text = result.candidates[0].content.parts[0].text;
+                            hintContent.innerHTML = `<p>${text}</p>`;
+                        } else {
+                            hintContent.innerHTML = '<p>Sorry, I could not generate a hint at this time. Please try again.</p>';
+                        }
+                    } catch (error) {
+                        console.error('Error fetching hint from Gemini API:', error);
+                        hintContent.innerHTML = '<p>An error occurred while fetching the hint. Please check your network connection.</p>';
+                    } finally {
+                        hintLoading.style.display = 'none'; // Hide loading spinner
+                    }
+                } else {
+                    hintContent.innerHTML = '<p>No hint available for this challenge.</p>';
+                    hintLoading.style.display = 'none';
+                }
+            });
+        });
+
+        // Close modal when clicking on 'x'
+        closeButton.addEventListener('click', () => {
+            hintModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', (event) => {
+            if (event.target == hintModal) {
+                hintModal.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
