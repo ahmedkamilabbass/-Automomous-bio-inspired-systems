@@ -3,27 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webots Fundamentals for  Automomous bio-inspired systems</title>
+    <title>Webots Fundamentals for Bio-inspired Robotics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals (Slate, Zinc, Sky) -->
-    <!-- Application Structure Plan: A thematic, single-page application designed to guide students through a learning journey. The core is an interactive timeline representing the course progression, allowing users to click on topics to reveal detailed information. This non-linear exploration is more engaging than a static report. It's supported by an interactive GUI diagram, challenge cards, and a resource hub, transforming the curriculum from a document into a tool. -->
-    <!-- Visualization & Content Choices: Report Info: Webots GUI components. Goal: Organize/Inform. Viz: Interactive HTML/CSS diagram with hover effects. Justification: More engaging and intuitive than a static table. Report Info: Lecture progression. Goal: Show Change/Organize. Viz: Clickable vertical timeline. Justification: Visually represents the learning path and chunks information effectively. Report Info: API functions/Resources. Goal: Organize. Viz: Clickable cards and lists. Justification: Modern, scannable, and more user-friendly than dense tables. Library/Method: Vanilla JS for all interactions. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* slate-50 */
+            background-color: #f8fafc;
         }
         .nav-link {
             transition: color 0.3s, border-bottom-color 0.3s;
             border-bottom: 2px solid transparent;
         }
         .nav-link.active, .nav-link:hover {
-            color: #0284c7; /* sky-600 */
-            border-bottom-color: #0284c7; /* sky-600 */
+            color: #0284c7;
+            border-bottom-color: #0284c7;
         }
         .content-card {
             transition: transform 0.3s, box-shadow 0.3s;
@@ -38,17 +34,16 @@
             transition: max-height 0.5s ease-in-out;
         }
         .timeline-item-content.open {
-            max-height: 1000px; /* Adjust as needed */
+            max-height: 1000px;
         }
         .gui-element {
             transition: background-color 0.3s, border-color 0.3s;
             cursor: pointer;
         }
         .gui-element:hover, .gui-element.active {
-            background-color: #e0f2fe; /* sky-100 */
-            border-color: #0284c7; /* sky-600 */
+            background-color: #e0f2fe;
+            border-color: #0284c7;
         }
-        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -85,6 +80,15 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .code-block {
+            background-color: #e2e8f0; /* slate-200 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre-wrap; /* Ensures long lines wrap */
+            word-break: break-all; /* Breaks words if necessary */
+        }
     </style>
 </head>
 <body class="text-slate-800">
@@ -92,8 +96,9 @@
     <!-- Header & Navigation -->
     <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-sky-700"> Automomous bio-inspired systems</h1>
+            <h1 class="text-xl font-bold text-sky-700">Bio-inspired Robotics</h1>
             <div class="hidden md:flex items-center space-x-8">
+                <a href="#installation-guide" class="nav-link font-medium">Setup Guide</a>
                 <a href="#why-webots" class="nav-link font-medium">Why Webots?</a>
                 <a href="#learning-path" class="nav-link font-medium">Learning Path</a>
                 <a href="#toolkit" class="nav-link font-medium">The Toolkit</a>
@@ -106,6 +111,7 @@
             </button>
         </nav>
         <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 flex flex-col space-y-2">
+            <a href="#installation-guide" class="nav-link block py-2">Setup Guide</a>
             <a href="#why-webots" class="nav-link block py-2">Why Webots?</a>
             <a href="#learning-path" class="nav-link block py-2">Learning Path</a>
             <a href="#toolkit" class="nav-link block py-2">The Toolkit</a>
@@ -120,7 +126,248 @@
         <!-- Intro Section -->
         <section class="text-center mb-24">
             <h2 class="text-4xl md:text-5xl font-bold mb-4">Webots Fundamentals</h2>
-            <p class="text-lg text-slate-600 max-w-3xl mx-auto">An interactive guide for the  Autonomous bio-inspired systems course at the University of Namur. Explore the core concepts of the Webots simulator and prepare for your practical journey into robotics.</p>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">An interactive guide for the Bio-inspired Robotics course at the University of Namur. Explore the core concepts of the Webots simulator and prepare for your practical journey into robotics.</p>
+        </section>
+
+        <!-- Installation Guide -->
+        <section id="installation-guide" class="mb-24 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-center mb-2">Setup Guide: Your Robotics Development Environment</h3>
+            <p class="text-md text-slate-600 text-center max-w-3xl mx-auto mb-12">This comprehensive guide will walk you through setting up your computer for this course. We'll install a virtual machine, Ubuntu Linux, ROS 2 Jazzy, the Webots simulator, and the necessary bridge to make them work together. A stable and consistent environment is key to your success!</p>
+
+            <div class="space-y-12">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h4 class="text-2xl font-bold mb-4 text-sky-700">1. Virtual Machine Software (VirtualBox)</h4>
+                    <p class="text-slate-700 mb-4">Using a Virtual Machine (VM) keeps your robotics setup isolated from your main operating system, provides easy recovery with snapshots, and ensures everyone in the class has a consistent environment.</p>
+                    <p class="text-slate-700 mb-2 font-semibold">Prerequisites:</p>
+                    <ul class="list-disc list-inside text-slate-600 mb-4">
+                        <li>Host computer (Windows, macOS, Linux) with at least 8GB RAM (16GB recommended).</li>
+                        <li>~50-100GB free disk space.</li>
+                        <li>Internet connection.</li>
+                        <li>**Crucially:** Enable Virtualization Technology (VT-x/AMD-V) in your computer's BIOS/UEFI settings.</li>
+                    </ul>
+                    <p class="text-slate-700 mb-2 font-semibold">Steps:</p>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-1">
+                        <li>Download VirtualBox from <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" class="text-sky-600 hover:underline">virtualbox.org/wiki/Downloads</a>. Choose the appropriate installer for your **host operating system**.</li>
+                        <li>Run the downloaded installer and follow the on-screen prompts. Generally, accept the default settings.</li>
+                        <li>Allow any network adapters or drivers to be installed.</li>
+                        <li>**Important:** Reboot your host computer after installation if prompted.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h4 class="text-2xl font-bold mb-4 text-sky-700">2. Creating Your Ubuntu 24.04 Virtual Machine</h4>
+                    <p class="text-slate-700 mb-4">Ubuntu Linux is the standard operating system for ROS development. We will set up a new virtual machine specifically for our robotics work.</p>
+                    <p class="text-slate-700 mb-2 font-semibold">Steps:</p>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-1">
+                        <li>Download the `Ubuntu 24.04 LTS (Noble Numbat)` desktop ISO image (approx. 6.4 GB) from <a href="https://ubuntu.com/download/desktop" target="_blank" class="text-sky-600 hover:underline">ubuntu.com/download/desktop</a>.</li>
+                        <li>Open VirtualBox Manager. Click **"New"** (or Machine > New).</li>
+                        <li>Set **Name:** `Ubuntu-24.04-Robotics` (or similar).</li>
+                        <li>Select **ISO Image:** Choose the downloaded Ubuntu 24.04 LTS ISO.</li>
+                        <li>Set **Type:** `Linux`, **Version:** `Ubuntu (64-bit)`.</li>
+                        <li>**Base Memory (RAM):** **Minimum 4096 MB (4GB)**. (8192 MB / 8GB recommended if host allows). Stay within the green zone.</li>
+                        <li>**Processors (CPU):** **Minimum 2 CPUs**. (4+ recommended).</li>
+                        <li>**Hard Disk:** "Create a virtual hard disk now". Select `VDI (VirtualBox Disk Image)` and `Dynamically allocated`. Set **Size:** **Minimum 50 GB**. (80-100GB recommended).</li>
+                        <li>Click **"Finish"**.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h4 class="text-2xl font-bold mb-4 text-sky-700">3. Installing Ubuntu Desktop 24.04 LTS</h4>
+                    <p class="text-slate-700 mb-4">Now we will install the Ubuntu operating system onto your newly created virtual machine.</p>
+                    <p class="text-slate-700 mb-2 font-semibold">Steps:</p>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-1">
+                        <li>In VirtualBox, select your new VM and click **"Start"**.</li>
+                        <li>Follow the Ubuntu Installer prompts:
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>Choose your language.</li>
+                                <li>Select **"Install Ubuntu"**.</li>
+                                <li>Select your Keyboard Layout.</li>
+                                <li>Connect to the internet (important for updates).</li>
+                                <li>**Installation Type:** Select **"Normal installation"**, **"Download updates while installing Ubuntu"**, and **"Install third-party software"**.</li>
+                                <li>**Erase disk and install Ubuntu:** This is safe within a VM.</li>
+                                <li>Select your Location/timezone.</li>
+                                <li>Create your User Details (username, computer name, password). **Remember this password!**</li>
+                            </ul>
+                        </li>
+                        <li>Wait for the installation to complete. Reboot when prompted.</li>
+                        <li>**Install VirtualBox Guest Additions:** After Ubuntu installs, in the VM window, go to `Devices > Insert Guest Additions CD Image...`. Follow the prompts inside the VM to install for better display/mouse integration. Reboot VM again.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h4 class="text-2xl font-bold mb-4 text-sky-700">4. ROS 2 Jazzy Jalisco Installation</h4>
+                    <p class="text-slate-700 mb-4">ROS (Robot Operating System) is a flexible framework for writing robot software. We'll install ROS 2 Jazzy Jalisco.</p>
+                    <p class="text-slate-700 mb-2 font-semibold">Steps:</p>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-2">
+                        <li>**Open a Terminal** in your Ubuntu VM (`Ctrl+Alt+T`).</li>
+                        <li>**Set Locale (if needed):**
+                            <div class="code-block mt-1">
+                                locale # check for UTF-8 support<br>
+                                sudo apt update && sudo apt install locales<br>
+                                sudo locale-gen en_US en_US.UTF-8<br>
+                                sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8<br>
+                                export LANG=en_US.UTF-8
+                            </div>
+                        </li>
+                        <li>**Enable ROS 2 repositories:**
+                            <div class="code-block mt-1">
+                                sudo apt install software-properties-common<br>
+                                sudo add-apt-repository universe<br>
+                                sudo apt update && sudo apt install curl -y<br>
+                                export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\\" '{print $4}')<br>
+                                curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb"<br>
+                                sudo apt install /tmp/ros2-apt-source.deb
+                            </div>
+                        </li>
+                        <li>**Install ROS 2 Jazzy Desktop:**
+                            <div class="code-block mt-1">
+                                sudo apt update<br>
+                                sudo apt upgrade<br>
+                                sudo apt install ros-jazzy-desktop
+                            </div>
+                        </li>
+                        <li>**Setup Environment:**
+                            <div class="code-block mt-1">
+                                echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc<br>
+                                source ~/.bashrc
+                            </div>
+                        </li>
+                        <li>**Test ROS 2:**
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>Open Terminal 1: `ros2 run demo_nodes_cpp talker`</li>
+                                <li>Open Terminal 2: `ros2 run demo_nodes_py listener`</li>
+                                <li>You should see messages being sent and received.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h4 class="text-2xl font-bold mb-4 text-sky-700">5. Webots R2025a Installation</h4>
+                    <p class="text-slate-700 mb-4">Webots is our 3D robot simulator. We will install the latest stable version, R2025a.</p>
+                    <p class="text-slate-700 mb-2 font-semibold">Steps:</p>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-2">
+                        <li>**Open a Terminal** in your Ubuntu VM.</li>
+                        <li>**Method 1: APT Repository (Recommended for updates)**
+                            <ol class="list-decimal list-inside ml-4 space-y-1 mt-1">
+                                <li>**Add Cyberbotics GPG Key:**
+                                    <div class="code-block mt-1">
+                                        sudo mkdir -p /etc/apt/keyrings<br>
+                                        cd /etc/apt/keyrings<br>
+                                        sudo wget -q https://cyberbotics.com/Cyberbotics.asc
+                                    </div>
+                                </li>
+                                <li>**Add Webots Repository:**
+                                    <div class="code-block mt-1">
+                                        echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/Cyberbotics.asc] https://cyberbotics.com/debian binary-amd64/" | sudo tee /etc/apt/sources.list.d/Cyberbotics.list<br>
+                                        sudo apt update
+                                    </div>
+                                </li>
+                                <li>**Install Webots:**
+                                    <div class="code-block mt-1">
+                                        sudo apt install webots
+                                    </div>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>**Method 2: Direct Debian Package (.deb)**
+                            <ol class="list-decimal list-inside ml-4 space-y-1 mt-1">
+                                <li>**Download .deb file:** Go to <a href="https://cyberbotics.com/#download" target="_blank" class="text-sky-600 hover:underline">cyberbotics.com/#download</a> and download the `Webots R2025a_amd64.deb` package for Ubuntu.</li>
+                                <li>**Install:**
+                                    <div class="code-block mt-1">
+                                        cd ~/Downloads<br>
+                                        sudo apt install ./webots_R2025a_amd64.deb
+                                    </div>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>**Test Webots:** Open Webots from your applications menu or by typing `webots` in the terminal.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h4 class="text-2xl font-bold mb-4 text-sky-700">6. Connecting Webots & ROS 2: `webots_ros2`</h4>
+                    <p class="text-slate-700 mb-4">This package acts as the bridge, allowing your ROS 2 nodes to communicate seamlessly with Webots simulations.</p>
+                    <p class="text-slate-700 mb-2 font-semibold">Steps:</p>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-2">
+                        <li>**Open a Terminal** in your Ubuntu VM.</li>
+                        <li>**Installation (from binaries - Recommended):**
+                            <div class="code-block mt-1">
+                                sudo apt update<br>
+                                sudo apt install ros-jazzy-webots-ros2
+                            </div>
+                        </li>
+                        <li>**Set `WEBOTS_HOME` (Important for ROS 2):**
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>The default Webots installation via APT is `/usr/local/webots`.</li>
+                                <li>Add this to your `~/.bashrc` to ensure ROS 2 can find Webots:
+                                    <div class="code-block mt-1">
+                                        echo "export WEBOTS_HOME=/usr/local/webots" >> ~/.bashrc<br>
+                                        source ~/.bashrc
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h4 class="text-2xl font-bold mb-4 text-sky-700">7. Final Test: Running a Webots-ROS 2 Example</h4>
+                    <p class="text-slate-700 mb-4">This test verifies that your Webots and ROS 2 installations are successfully integrated.</p>
+                    <p class="text-slate-700 mb-2 font-semibold">Steps:</p>
+                    <ol class="list-decimal list-inside text-slate-600 space-y-2">
+                        <li>**Open a new Terminal** in your Ubuntu VM.</li>
+                        <li>**Source ROS 2 environment:**
+                            <div class="code-block mt-1">
+                                source /opt/ros/jazzy/setup.bash
+                            </div>
+                        </li>
+                        <li>**Run a `webots_ros2` demo launch file:**
+                            <div class="code-block mt-1">
+                                ros2 launch webots_ros2_universal_robot universal_robot_launch.py
+                            </div>
+                        </li>
+                        <li>**Observe:** A Webots window should open with a Universal Robot, and ROS 2 nodes should be running in the terminal. This confirms a successful setup!</li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h4 class="text-2xl font-bold mb-4 text-sky-700">Common Issues & Troubleshooting</h4>
+                    <p class="text-slate-700 mb-4">Don't worry if you hit a snag! Here are common problems and their solutions:</p>
+                    <ul class="list-disc list-inside text-slate-600 space-y-2">
+                        <li>**Virtualization Not Enabled:** VM won't boot 64-bit OS.
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>**Fix:** Enable VT-x/AMD-V in your computer's BIOS/UEFI settings.</li>
+                            </ul>
+                        </li>
+                        <li>**Incompatible Python/ROS/Webots Versions:** Errors during install or runtime.
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>**Fix:** Ensure you're strictly following the guide for Ubuntu 24.04, ROS Jazzy, and Webots R2025a, as these versions are compatible.</li>
+                            </ul>
+                        </li>
+                        <li>**Missing `WEBOTS_HOME`:** `webots_ros2` cannot find Webots.
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>**Fix:** Set `export WEBOTS_HOME=/usr/local/webots` in `~/.bashrc` and `source ~/.bashrc`.</li>
+                            </ul>
+                        </li>
+                        <li>**Missing Dependencies:** Errors during `apt install` or `colcon build` (if building from source).
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>**Fix:** Read error messages carefully; they usually tell you the missing package name. Use `sudo apt install <missing-package-name>`.</li>
+                            </ul>
+                        </li>
+                        <li>**Graphics/Display Issues in VM:** Poor performance, no full screen.
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>**Fix:** Ensure VirtualBox Guest Additions are installed. In VM settings (Display), enable 2D/3D acceleration and allocate more video memory.</li>
+                            </ul>
+                        </li>
+                        <li>**Internet/Network Issues in VM:** Cannot download packages.
+                            <ul class="list-disc list-inside ml-4 space-y-1 mt-1">
+                                <li>**Fix:** Check VirtualBox network adapter settings for the VM; NAT is usually sufficient.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </section>
 
         <!-- Why Webots? -->
@@ -308,7 +555,7 @@
 
     <footer class="bg-slate-800 text-slate-300 mt-24">
         <div class="container mx-auto px-6 py-8 text-center">
-            <p> Automomous bio-inspired systems | University of Namur</p>
+            <p>Bio-inspired Robotics | University of Namur</p>
             <p class="text-sm text-slate-400 mt-2">Interactive Guide created from Course Plan</p>
         </div>
     </footer>
@@ -416,16 +663,16 @@
                 const challengeType = button.dataset.challenge;
                 const prompt = challengePrompts[challengeType];
 
-                hintContent.innerHTML = ''; // Clear previous content
-                hintLoading.style.display = 'flex'; // Show loading spinner
-                hintModal.style.display = 'flex'; // Show the modal
+                hintContent.innerHTML = '';
+                hintLoading.style.display = 'flex';
+                hintModal.style.display = 'flex';
 
                 if (prompt) {
                     try {
                         let chatHistory = [];
                         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                         const payload = { contents: chatHistory };
-                        const apiKey = ""; // Leave as-is, Canvas provides at runtime
+                        const apiKey = "";
                         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                         
                         const response = await fetch(apiUrl, {
@@ -447,7 +694,7 @@
                         console.error('Error fetching hint from Gemini API:', error);
                         hintContent.innerHTML = '<p>An error occurred while fetching the hint. Please check your network connection.</p>';
                     } finally {
-                        hintLoading.style.display = 'none'; // Hide loading spinner
+                        hintLoading.style.display = 'none';
                     }
                 } else {
                     hintContent.innerHTML = '<p>No hint available for this challenge.</p>';
@@ -456,12 +703,10 @@
             });
         });
 
-        // Close modal when clicking on 'x'
         closeButton.addEventListener('click', () => {
             hintModal.style.display = 'none';
         });
 
-        // Close modal when clicking outside the modal content
         window.addEventListener('click', (event) => {
             if (event.target == hintModal) {
                 hintModal.style.display = 'none';
