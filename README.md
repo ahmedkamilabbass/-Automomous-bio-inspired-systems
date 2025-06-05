@@ -1,1 +1,1 @@
-# Bio-Inspired-Robots
+# Automomous bio-inspired systems
